@@ -10,6 +10,7 @@ class DomainGetter:
         words = []
         self.length = 0
         self.startsWith = None
+        self.endsWith = None
         self.wordsOnly = False
         self.args = args
     
@@ -23,7 +24,10 @@ class DomainGetter:
 
             if self.startsWith != None:
                 self.words = [w for w in self.words if w[0:len(self.startsWith)] == self.startsWith]
-
+                
+            if self.endsWith != None:
+                self.words = [w for w in self.words if w[0-len(self.endsWith):] == self.endsWith]
+                
             if len(args) > 0:
                 #if there are still args (non-len), do a search for the words:
                 for w in self.words:
@@ -39,7 +43,7 @@ class DomainGetter:
 
     def getNonWordArgs(self):
         args = self.args
-        #this one pops, have to re-loop after
+        #if one pops, have to re-loop after
         for i in range(0, len(args)):
             a = args[i]
             #catch the length arg if it exists, and remove those args
@@ -48,11 +52,19 @@ class DomainGetter:
                 args.pop(i + 1)
                 args.pop(i)
                 break
-        #this one pops, have to re-loop after
+        
         for i in range(0, len(args)):
             a = args[i]
             if a.lower() == '--starts-with':
                 self.startsWith = args[i + 1]
+                args.pop(i + 1)
+                args.pop(i)
+                break
+
+        for i in range(0, len(args)):
+            a = args[i]
+            if a.lower() == '--ends-with':
+                self.endsWith = args[i + 1]
                 args.pop(i + 1)
                 args.pop(i)
                 break
@@ -74,7 +86,7 @@ class DomainGetter:
 
             if self.wordsOnly == False:
                 for tld in self.tlds:
-                    if word.endswith(tld):
+                    if word.endswith(tld) and len(word.rstrip(tld)) >= 3:
                         yield '%s.%s' % (word.rstrip(tld), tld)
                     else:
                         yield False
