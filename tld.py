@@ -26,12 +26,13 @@ class DomainGetter:
                 self.words = [w for w in self.words if w[0:len(self.startsWith)] == self.startsWith]
                 
             if self.endsWith != None:
-                self.words = [w for w in self.words if w[0-len(self.endsWith):] == self.endsWith]
+                self.words = [w for w in self.words if w[0-len(self.endsWith):] == self.endsWith]            
                 
             if len(args) > 0:
+                print args
                 #if there are still args (non-len), do a search for the words:
                 for w in self.words:
-                    for a in args:
+                    for a in args:                        
                         if a in w:
                             words.append(w)
                             break
@@ -43,38 +44,32 @@ class DomainGetter:
 
     def getNonWordArgs(self):
         args = self.args
-        #if one pops, have to re-loop after
-        for i in range(0, len(args)):
-            a = args[i]
+
+        for a in args:
+            print a
             #catch the length arg if it exists, and remove those args
+            i = args.index(a)
             if a.lower() == '-l' or a.lower() == '--len':
+                self.length = float(args.pop(i + 1))                
+
+            #catch the length arg if it exists, and remove those args
+            elif a.lower() == '-l' or a.lower() == '--len':
                 self.length = float(args[i + 1])
                 args.pop(i + 1)
-                args.pop(i)
-                break
         
-        for i in range(0, len(args)):
-            a = args[i]
-            if a.lower() == '--starts-with':
+            elif a.lower() == '--starts-with':
                 self.startsWith = args[i + 1]
                 args.pop(i + 1)
-                args.pop(i)
-                break
 
-        for i in range(0, len(args)):
-            a = args[i]
-            if a.lower() == '--ends-with':
+            elif a.lower() == '--ends-with':
                 self.endsWith = args[i + 1]
                 args.pop(i + 1)
-                args.pop(i)
-                break
 
-        for i in range(0, len(args)):
-            a = args[i]
-            if a.lower() == '--words-only':
+            elif a.lower() == '--words-only':
                 self.wordsOnly = True
-                args.pop(i)
-                break
+
+        #clear the args out of the list:
+        args = [a for a in args if not '--' in a]
 
         self.args = args
         return args
