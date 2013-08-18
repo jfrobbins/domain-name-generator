@@ -76,8 +76,9 @@ class DomainGetter:
          
     def __iter__(self):
         while len(self.words) > 1:
-            word = choice(self.words)
+            word = choice(self.words)            
             self.words.remove(word)
+            word = word.replace("'","")
 
             if self.wordsOnly == False:
                 for tld in self.tlds:
@@ -85,8 +86,10 @@ class DomainGetter:
                         yield '%s.%s' % (word.rstrip(tld), tld)
                     else:
                         yield False
+            elif len(word) >= 3:
+                yield word
             else:
-                yield word    
+                yield False
 
 
 ###############################################
